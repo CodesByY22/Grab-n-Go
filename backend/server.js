@@ -24,8 +24,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// Health check
-app.get('/', (req, res) => {
+// API Health check
+app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Grab-n-Go API is running 🚀' });
 });
 
