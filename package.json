@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "scripts": {
     "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
-    "build": "cd frontend && npm run build",
+    "build": "npm run install-all && npm run build",
     "start": "node backend/server.js",
     "production": "npm run build && npm start"
   },
   "dependencies": {
-    "react-toastify": "^11.0.5"
+    "react-toastify": "^11.0.5",
+    "mongoose": "^8.0.3",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2",
+    "mongodb-memory-server": "^11.0.1"
   }
 }

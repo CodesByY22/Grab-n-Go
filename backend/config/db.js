@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+// No hard require for memory server here to prevent production crashes
 
 let mongoServer;
 
@@ -25,13 +25,14 @@ const connectDB = async () => {
     
     console.log('\n⏳ Falling back to local MongoDB Memory Server...');
     try {
+      // Dynamic import to prevent production crashes
+      const { MongoMemoryServer } = require('mongodb-memory-server');
       mongoServer = await MongoMemoryServer.create();
       const localUri = mongoServer.getUri();
       await mongoose.connect(localUri);
       console.log('✅ Local Memory Server active.');
-      console.log('🚨 WARNING: Data created now will be LOST when the server restarts.');
     } catch (localError) {
-      console.error('❌ Critical: Failed to start any database:', localError.message);
+      console.error('❌ Critical: Failed to start any database. Ensure MONGO_URI is set.');
       process.exit(1);
     }
   }
