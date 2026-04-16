@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
@@ -12,6 +12,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [myShopStats, setMyShopStats] = useState({ live: 0, revenue: 0, isOpen: true });
+  const resultsRef = useRef(null);
 
   const fetchVendorStats = async () => {
     if (user?.role === 'vendor' && user?.token) {
@@ -59,6 +60,17 @@ const Home = () => {
     fetchShopsData();
     fetchVendorStats();
   }, [user]);
+
+  // Auto-scroll to results when searching
+  useEffect(() => {
+    if (search.trim().length > 0 && resultsRef.current) {
+        // Only scroll if we aren't already looking at the results
+        const rect = resultsRef.current.getBoundingClientRect();
+        if (rect.top > window.innerHeight * 0.8) {
+            resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+  }, [search]);
 
   // Comprehensive Search Logic: Checks Shop Name, Description, and Menu Items
   const filteredShops = shops.filter(shop => {
@@ -217,7 +229,7 @@ const Home = () => {
       </section>
 
       {/* Main Home Content */}
-      <section className="max-w-7xl mx-auto px-4 pb-24 relative z-10">
+      <section ref={resultsRef} className="max-w-7xl mx-auto px-4 pb-24 relative z-10">
           {user?.role === 'vendor' ? (
               /* VENDOR SPECIFIC HOME CONTENT */
               <div className="space-y-16">
