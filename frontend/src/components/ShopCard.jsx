@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaStore, FaClock, FaChevronRight, FaStar } from 'react-icons/fa';
 
-const ShopCard = ({ shop, index }) => {
+const ShopCard = ({ shop, index, searchTerm = '' }) => {
+  const matchedItem = searchTerm 
+    ? shop.menu.find(item => 
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : null;
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -63,6 +68,11 @@ const ShopCard = ({ shop, index }) => {
         {/* Content */}
         <div className="p-8 flex-1 flex flex-col">
           <div className="mb-4">
+            {matchedItem && (
+               <div className="inline-flex items-center gap-2 bg-brand/10 border border-brand/20 px-3 py-1 rounded-lg mb-3">
+                  <span className="text-[10px] font-black text-brand uppercase tracking-widest">Sells: {matchedItem.name}</span>
+               </div>
+            )}
             <h3 className="text-2xl font-black text-white group-hover:text-brand transition-colors mb-2 tracking-tight line-clamp-1">{shop.name}</h3>
             <p className="text-gray-500 text-sm font-medium leading-relaxed line-clamp-2 min-h-[2.5rem]">
                 {shop.description || 'Discover a world of flavors at our shop. Prepared fresh, ordered fast.'}

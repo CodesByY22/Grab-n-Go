@@ -60,9 +60,24 @@ const Home = () => {
     fetchVendorStats();
   }, [user]);
 
-  const filteredShops = shops.filter(shop =>
-    shop.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Comprehensive Search Logic: Checks Shop Name, Description, and Menu Items
+  const filteredShops = shops.filter(shop => {
+    const query = search.toLowerCase();
+    
+    // 1. Matches Shop Name
+    const nameMatch = shop.name.toLowerCase().includes(query);
+    
+    // 2. Matches Shop Description
+    const descMatch = shop.description?.toLowerCase().includes(query);
+    
+    // 3. Matches any Menu Item (Name or Description)
+    const menuMatch = shop.menu?.some(item => 
+      item.name.toLowerCase().includes(query) || 
+      item.description?.toLowerCase().includes(query)
+    );
+
+    return nameMatch || descMatch || menuMatch;
+  });
 
   return (
     <div className="page-fade-in pt-32">
@@ -262,7 +277,7 @@ const Home = () => {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                             {filteredShops.map((shop, i) => (
-                                <ShopCard key={shop._id} shop={shop} index={i} />
+                                <ShopCard key={shop._id} shop={shop} index={i} searchTerm={search} />
                             ))}
                         </div>
                     </div>
@@ -301,7 +316,7 @@ const Home = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
                             <AnimatePresence mode='popLayout'>
                                 {filteredShops.map((shop, i) => (
-                                    <ShopCard key={shop._id} shop={shop} index={i} />
+                                    <ShopCard key={shop._id} shop={shop} index={i} searchTerm={search} />
                                 ))}
                             </AnimatePresence>
                         </div>
