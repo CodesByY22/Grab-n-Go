@@ -61,16 +61,12 @@ const Home = () => {
     fetchVendorStats();
   }, [user]);
 
-  // Auto-scroll to results when searching
-  useEffect(() => {
-    if (search.trim().length > 0 && resultsRef.current) {
-        // Only scroll if we aren't already looking at the results
-        const rect = resultsRef.current.getBoundingClientRect();
-        if (rect.top > window.innerHeight * 0.8) {
-            resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
+  // Manual scroll to results
+  const handleSearchScroll = () => {
+    if (resultsRef.current) {
+        resultsRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [search]);
+  };
 
   // Comprehensive Search Logic: Checks Shop Name, Description, and Menu Items
   const filteredShops = shops.filter(shop => {
@@ -181,9 +177,13 @@ const Home = () => {
                       placeholder="Search for 'Burgers', 'Coffee', 'Desserts'..."
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSearchScroll()}
                       className="flex-1 px-4 py-4 bg-transparent text-white placeholder-gray-600 focus:outline-none text-lg font-medium"
                     />
-                    <button className="hidden sm:block bg-brand hover:bg-brand-hover text-white px-8 py-4 rounded-[1.3rem] font-bold transition-all shadow-lg shadow-brand/20 active:scale-95">
+                    <button 
+                      onClick={handleSearchScroll}
+                      className="hidden sm:block bg-brand hover:bg-brand-hover text-white px-8 py-4 rounded-[1.3rem] font-bold transition-all shadow-lg shadow-brand/20 active:scale-95"
+                    >
                       Browse Menu
                     </button>
                   </div>
