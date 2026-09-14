@@ -4,8 +4,9 @@ services:
     name: grab-n-go-backend
     env: node
     region: oregon
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && node index.js
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node index.js
     envVars:
       - key: PORT
         value: 5000
@@ -18,8 +19,9 @@ services:
   - type: web
     name: grab-n-go-frontend
     env: static
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: ./frontend/dist
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
     routes:
       - type: rewrite
         source: /*
