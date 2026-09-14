@@ -1,5 +1,15 @@
 import { io } from 'socket.io-client';
 
-const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+const getSocketURL = () => {
+  if (import.meta.env.VITE_BACKEND_URL) return import.meta.env.VITE_BACKEND_URL;
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:5000';
+  }
+  return 'https://grab-n-go-1.onrender.com';
+};
 
-export const socket = io(SOCKET_URL);
+export const socket = io(getSocketURL(), {
+  autoConnect: true,
+  reconnectionAttempts: 3,
+  timeout: 5000
+});
