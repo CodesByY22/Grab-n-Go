@@ -10,7 +10,11 @@ export default function RoleSwitcher() {
   const currentRole = user?.role || 'STUDENT';
 
   const handleSwitch = async (roleKey) => {
-    await loginAsDemo(roleKey);
+    try {
+      await loginAsDemo(roleKey);
+    } catch (e) {
+      console.warn('Role switch network fallback:', e);
+    }
     if (roleKey === 'STUDENT') navigate('/dashboard');
     if (roleKey === 'VENDOR') navigate('/vendor');
     if (roleKey === 'ADMIN') navigate('/admin');

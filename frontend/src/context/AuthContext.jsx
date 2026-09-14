@@ -42,7 +42,20 @@ export function AuthProvider({ children }) {
   const loginAsDemo = async (roleKey) => {
     const demo = DEMO_USERS[roleKey];
     if (demo) {
-      return await login(demo.email, demo.password);
+      try {
+        return await login(demo.email, demo.password);
+      } catch (err) {
+        console.warn(`Backend API login unavailable for ${roleKey}, activating instant demo session:`, err?.message);
+        const fallbackUser = {
+          id: roleKey === 'VENDOR' ? 'cafeteria_1' : roleKey === 'ADMIN' ? 'admin_1' : 'student_1',
+          name: roleKey === 'VENDOR' ? 'Main Campus Vendor' : roleKey === 'ADMIN' ? 'Campus Admin' : 'Alex Chen',
+          email: demo.email,
+          role: roleKey,
+          cafeteria: roleKey === 'VENDOR' ? { id: 'cafeteria_1', name: 'Main Campus Cafeteria' } : undefined
+        };
+        setUser(fallbackUser);
+        return fallbackUser;
+      }
     }
   };
 
