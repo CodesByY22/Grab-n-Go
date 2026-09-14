@@ -6,14 +6,12 @@ let mongoMemoryServer = null;
 const connectDB = async () => {
   let uri = process.env.MONGODB_URI;
 
-  // Disable bufferCommands to fail fast if DB connection is unavailable
-  mongoose.set('bufferCommands', false);
-
   // 1. Try Remote / Atlas MongoDB
   if (uri && (uri.startsWith('mongodb+srv://') || (!uri.includes('127.0.0.1') && !uri.includes('localhost')))) {
     try {
       console.log('📡 Connecting to Cloud MongoDB Atlas...');
-      await mongoose.connect(uri, { serverSelectionTimeoutMS: 3000 });
+      mongoose.set('bufferCommands', false);
+      await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
       if (mongoose.connection.readyState === 1) {
         console.log(`🍃 Connected to Cloud/Remote MongoDB: ${mongoose.connection.host}`);
         return;
@@ -23,8 +21,17 @@ const connectDB = async () => {
       console.warn(`👉 TIP FOR MONGODB ATLAS: Make sure your IP address is whitelisted in MongoDB Atlas:`);
       console.warn(`   Go to Atlas Dashboard -> Network Access -> Add IP Address -> "Allow Access From Anywhere" (0.0.0.0/0).`);
       console.warn(`🔄 Falling back to zero-setup In-Memory MongoDB...`);
-      try { await mongoose.disconnect(); } catch (e) {}
+      try { 
+        await mongoose.disconnect();
+      } catch (e) {}
     }
+  }
+
+  // Ensure connection state is completely clean
+  if (mongoose.connection.readyState !== 0) {
+    try {
+      await mongoose.disconnect();
+    } catch (e) {}
   }
 
   // Re-enable buffering for memory server
