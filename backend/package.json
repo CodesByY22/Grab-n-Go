@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "echo 'Backend build step complete'",
+    "build": "npm install",
     "dev": "nodemon index.js"
   },
   "dependencies": {
